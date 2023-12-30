@@ -1,10 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+// import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-@Injectable()
-export class AuthenticateGuard implements CanActivate {
-  async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+// @Injectable()
+// export class AuthenticateGuard implements CanActivate {
+//   async canActivate(context: ExecutionContext) {
+//     const request = context.switchToHttp().getRequest();
 
-    return request.isAuthenticated();
-  }
-}
+//     return request.isAuthenticated();
+//   }
+// }
