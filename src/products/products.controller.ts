@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { InsertProductDTO } from './insertProduct.dto';
 
@@ -9,6 +9,11 @@ export class ProductsController {
   @Get()
   async getProducts() {
     return await this.productService.getProducts();
+  }
+
+  @Get(':id')
+  async getProductById(@Param('id') id: string) {
+    return await this.productService.findProductOneById(id);
   }
 
   @Post()
