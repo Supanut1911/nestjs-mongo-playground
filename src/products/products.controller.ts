@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { InsertProductDTO } from './DTO/insertProduct.dto';
 import { UpdateProductDTO } from './DTO/updateProduct.dto';
@@ -29,5 +37,10 @@ export class ProductsController {
   async insertProduct(@Body() insertProductDto: InsertProductDTO) {
     const { title, desc, price } = insertProductDto;
     return await this.productService.insertProduct(title, desc, price);
+  }
+
+  @Delete(':id')
+  async deleteProduct(@Param('id') id: string) {
+    return await this.productService.deleteProduct(id);
   }
 }

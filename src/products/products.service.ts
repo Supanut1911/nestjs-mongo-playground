@@ -59,4 +59,19 @@ export class ProductsService {
       return updatedProduct;
     } catch (error) {}
   }
+  async deleteProduct(id: string) {
+    try {
+      const res = await this.productModule
+        .deleteOne({
+          _id: id,
+        })
+        .exec();
+      if (res.deletedCount === 0) {
+        throw new BadRequestException('delete fail');
+      }
+      return res;
+    } catch (error) {
+      throw new BadRequestException('delete fail');
+    }
+  }
 }
