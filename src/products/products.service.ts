@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Product } from './product.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { NotFoundError } from 'rxjs';
+import { UpdateProductDTO } from './DTO/updateProduct.dto';
 @Injectable()
 export class ProductsService {
   constructor(
@@ -22,9 +26,13 @@ export class ProductsService {
 
   async findProductOneById(id: string) {
     try {
-      return await this.productModule.findById(id);
+      const product = await this.productModule.findById(id);
+      if (!product) {
+        throw new BadRequestException(`not found product id: ${id}`);
+      }
+      return product;
     } catch (error) {
-      throw new NotFoundException(`not found product id: ${id}`);
+      throw new NotFoundException(`query findone error:${error}`);
     }
   }
 
@@ -36,5 +44,19 @@ export class ProductsService {
     });
     const product = await newProduct.save();
     return product;
+  }
+
+  async updateProductById(id: string, updateProductDto: UpdateProductDTO) {
+    const { title, desc, price } = updateProductDto;
+
+    try {
+      const updatedProduct = await this.findProductOneById(id);
+      if (title) updatedProduct.title = title;
+      if (desc) updatedProduct.description = desc;
+      if (price) updatedProduct.price = price;
+
+      updatedProduct.save();
+      return updatedProduct;
+    } catch (error) {}
   }
 }
