@@ -1,9 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from './user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDTO } from './DTO/createUser.dto';
 import { encodePassword } from 'src/utils/bcrypt';
+import { error } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -11,25 +16,6 @@ export class UsersService {
     @InjectModel('User')
     private readonly userModule: Model<User>,
   ) {}
-
-  private readonly users: User[] = [
-    {
-      id: '1',
-      name: 'Alice doe',
-      username: 'alice',
-      password: 'alice123',
-    },
-    {
-      id: '2',
-      name: 'Bob doe',
-      username: 'bob',
-      password: 'bob123',
-    },
-  ];
-
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
-  }
 
   async insertUser(createUserDTO: CreateUserDTO) {
     const { username, password, name } = createUserDTO;
@@ -42,6 +28,18 @@ export class UsersService {
         name,
       });
       const user = await newUser.save();
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async findUserByUsername(username: string) {
+    try {
+      const user = await this.userModule.findOne({ username });
+      if (!user) {
+        throw new NotFoundException(error);
+      }
       return user;
     } catch (error) {
       throw new BadRequestException(error);
